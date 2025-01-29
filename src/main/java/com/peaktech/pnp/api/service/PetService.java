@@ -62,4 +62,21 @@ public class PetService implements UserDetailsService {
             return users;
         }
     }
+    public Pet findById(Long id) {
+        Pet pet = petRepository.findByIdAndActivedTrue(id).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        if (pet.getFoto() != null) {
+            try {
+                FotoOutput fotoOutput = uploadService.buscarArquivoBase64ComFormato(user.getFoto(), caminhoFotos);
+                pet.setFoto(fotoOutput.getFoto_base64());
+                pet.setFormato_foto(fotoOutput.getFormato_foto());
+            } catch (Exception e) {
+                System.err.println("Erro ao carregar a foto para o usuário " + pet.getName() + ": " + e.getMessage());
+                pet.setFoto(null);
+                pet.setFormato_foto(null);
+            }
+        }
+
+        return pet;
+    }
 }
