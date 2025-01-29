@@ -79,4 +79,21 @@ public class PetService implements UserDetailsService {
 
         return pet;
     }
+    public Pet updateById(Long id, PetInput userInput) {
+        Pet pet = findById(id);
+        String uniqueFileName = salvarFotoPerfil(userInput, pet.getId(), "");
+
+        pet.setName(userInput.getName());
+        pet.setNascimento(((userInput.getNascimento());
+        pet.setTutor(userInput.getTutor());
+        pet.setBanho(userInput.getBanho());
+        pet.setAlimentacao(userInput.getAlimentacao());
+        pet.setVacina(userInput.getVacina());
+        pet.setVermifugo(userInput.getVermifugo());
+        pet.setMedicamento(userInput.getMedicamento());
+        pet.setObs(userInput.getObs());
+        pet.setFoto(uniqueFileName);
+
+        return petRepository.save(pet);
+    }
 }
