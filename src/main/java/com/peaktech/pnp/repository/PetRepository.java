@@ -10,7 +10,8 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface PetRepository extends JpaRepository<User, Long> {
+public interface PetRepository extends JpaRepository<Pet , Long> {
+
 
     static List<Pet> findByActivedTrue();
 
