@@ -81,7 +81,7 @@ public class PetService implements UserDetailsService {
     }
     public Pet updateById(Long id, PetInput userInput) {
         Pet pet = findById(id);
-        String uniqueFileName = salvarFotoPerfil(userInput, pet.getId(), "");
+        String uniqueFileName = salvarFotoPerfilPet(userInput, pet.getId(), "");
 
         pet.setName(userInput.getName());
         pet.setNascimento(((userInput.getNascimento());
@@ -95,5 +95,20 @@ public class PetService implements UserDetailsService {
         pet.setFoto(uniqueFileName);
 
         return petRepository.save(pet);
+    }
+    private String salvarFotoPerfilPet(PetInput petInput, Long idPet, String uniqueFileName) {
+        if (petInput.getFoto() != null && utils.isBase64(petInput.getFoto())) {
+            String nomeFoto = userRepository.findByFoto(idPet);
+
+            if (nomeFoto != null) {
+                uploadService.deleteFile(nomeFoto, caminhoFotos);
+            }
+
+            FileUploadInput fileUploadInput = new FileUploadInput();
+            fileUploadInput.setPdfBase64(petInput.getFoto());
+            fileUploadInput.setFileName("foto");
+            uniqueFileName = this.uploadService.saveBase64(fileUploadInput, caminhoFotos);
+        }
+        return uniqueFileName;
     }
 }
