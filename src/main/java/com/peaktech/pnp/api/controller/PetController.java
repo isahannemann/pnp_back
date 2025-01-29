@@ -3,8 +3,10 @@ package com.peaktech.pnp.api.controller;
 import com.peaktech.pnp.api.service.PetService;
 import com.peaktech.pnp.model.entity.Pet;
 import com.peaktech.pnp.model.output.PetOutput;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,6 +32,19 @@ public class PetController {
                 .collect(Collectors.toList());
         return ResponseEntity.ok(responseDTOS);
     }
+
+    @PostMapping("/pet")
+    public ResponseEntity<?> savePet(@Valid @RequestBody PetInput petInput) {
+        if (petService.findById(petInput.getId()).isPresent()) {
+            return ResponseEntity.badRequest().body("Pet já cadastrado");
+        } else {
+            Pet createdPet = petService.save(petInput);
+            PetOutput petOutput = new PetOutput(createdPet);
+
+            return ResponseEntity.ok(petOutput);
+        }
+    }
+
 }
 
 
