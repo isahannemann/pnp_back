@@ -24,12 +24,13 @@ public class PetController {
 
     @GetMapping
     public ResponseEntity<List<PetOutput>> listAll() {
-        List<Pet> users = petService.listAll();
-        List<PetOutput> responseDTOS = users.stream()
+        List<Pet> pets = petService.listAll();
+        List<PetOutput> responseDTOS = pets.stream()
                 .map(PetOutput::new)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(responseDTOS);
     }
+    
 }
 
 
