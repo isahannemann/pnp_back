@@ -1,5 +1,9 @@
 ﻿package com.peaktech.pnp.api.controller;
 
+import com.peaktech.pnp.api.service.TutorService;
+import com.peaktech.pnp.model.entity.Tutor;
+import com.peaktech.pnp.model.input.TutorInput;
+import com.peaktech.pnp.model.output.TutorOutput;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -14,13 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class TutorController {
 
     @PostMapping
-    public ResponseEntity<?> save(@Valid @RequestBody tutorInput tutorInput) {
-        if (tutorService.findByEmail(tutorInput.getEmail()).isPresent()) {
+    public ResponseEntity<?> save(@Valid @RequestBody TutorInput tutorInput) {
+        if (TutorService.findByEmail(tutorInput.getEmail()).isPresent()) {
             return ResponseEntity.badRequest().body("Email já cadastrado");
-
-        } else if (tutorInput.getCpf() != null && tutorService.findByCpf(tutorInput.getCpf()).isPresent()) {
-            return ResponseEntity.badRequest().body("Cpf já cadastrado");
-
         } else {
             Tutor createdTutor = TutorService.save(tutorInput);
             TutorOutput userOutput = new TutorOutput(createdTutor);
