@@ -1,31 +1,48 @@
 ﻿package com.peaktech.pnp.api.service;
 
+import com.peaktech.pnp.exception.InvalidPasswordException;
 import com.peaktech.pnp.model.entity.RoleTutor;
 import com.peaktech.pnp.model.entity.Tutor;
 import com.peaktech.pnp.model.input.TutorInput;
+import com.peaktech.pnp.model.repository.TutorRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Optional;
 
+@Service
 public class TutorService {
+
+    @Autowired
+    private TutorRepository tutorRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private RoleTutorService roleTutorService;
 
     @PostConstruct
     private String encryptPassword(TutorInput tutorInput, Tutor tutor) {
-        String password = tutor.getPassword();
         if (tutorInput.getPassword() != null && !tutorInput.getPassword().isEmpty() && !tutorInput.getPassword().equals(tutor.getPassword())) {
-            password = passwordEncoder.encode(tutorInput.getPassword());
+            return passwordEncoder.encode(tutorInput.getPassword());
         }
-        return password;
+        return tutor.getPassword();
     }
+
     public Tutor deactivateById(Long id) {
         Tutor tutor = findById(id);
         tutor.setActived(false);
         return tutorRepository.save(tutor);
     }
-    public List<Tutor> listAllUserDesactived() {
+
+    public List<Tutor> listAllUserDeactivate() {
         return tutorRepository.findAllUserDesactived();
     }
 
@@ -43,31 +60,29 @@ public class TutorService {
         return tutorRepository.save(tutor);
     }
 
-    @Override
-    public UserDetails loadUserByUserName(String email) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         Tutor tutor = tutorRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado"));
         if (!tutor.getActived()) {
             throw new UsernameNotFoundException("Usuário não encontrado");
-        } else {
-            RoleTutor role = roleTutorService.findById(tutor.getRoleTutor().getId());
-            return org.springframework.security.core.userdetails.User.builder()
-                    .username(tutor.getEmail())
-                    .password(tutor.getPassword())
-                    .roles(role.getRoleTutor())
-                    .build();
         }
+        RoleTutor role = roleTutorService.findById(tutor.getRoleTutor().getId());
+        return User.builder()
+                .username(tutor.getEmail())
+                .password(tutor.getPassword())
+                .roles(role.getRoleTutor())
+                .build();
     }
 
     public Tutor authenticate(Tutor tutor) {
-        TutorDetails tutorDetails = loadTutorrByUsername(tutor.getEmail());
+        UserDetails tutorDetails = loadUserByUsername(tutor.getEmail());
         if (passwordEncoder.matches(tutor.getPassword(), tutorDetails.getPassword())) {
             return findByEmail(tutor.getEmail()).get();
         }
-        throw new SenhaInvalidaException();
+        throw new InvalidPasswordException();
     }
 
     public boolean activedAccountTutor(String email) {
-        Tutor tutor = this.tutorRepository.findByExistEmail(email).get();
+        Tutor tutor = tutorRepository.findByExistEmail(email).orElseThrow(() -> new RuntimeException("Tutor não encontrado"));
         if (tutor.getActived()) {
             return false;
         }
@@ -82,10 +97,14 @@ public class TutorService {
     }
 
     public Optional<Tutor> findByExistEmail(String email) {
-        return this.tutorRepository.findByExistEmail(email);
+        return tutorRepository.findByExistEmail(email);
     }
 
     public void delete(Long id) {
-        this.tutorRepository.deleteById(id);
+        tutorRepository.deleteById(id);
+    }
+
+    private Tutor findById(Long id) {
+        return tutorRepository.findById(id).orElseThrow(() -> new RuntimeException("Tutor não encontrado"));
     }
 }
