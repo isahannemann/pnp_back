@@ -1,6 +1,7 @@
 ﻿package com.peaktech.pnp.api.service;
 
 import com.peaktech.pnp.model.entity.RoleTutor;
+import com.peaktech.pnp.model.input.RoleTutorInput;
 import com.peaktech.pnp.repository.RoleTutorRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,10 @@ public class RoleTutorService {
         return roleTutorRepository.save(roleTutor);
     }
 
+    public List<RoleTutor> listAllRoleTutor() {
+        return roleTutorRepository.findAll();
+    }
+
     public RoleTutor updateById(Long id, RoleTutorInput roleTutorInput) {
         RoleTutor roleTutor = findById(id);
         modelMapper.map(roleTutorInput, roleTutor);
@@ -40,5 +45,11 @@ public class RoleTutorService {
     public void desactivateById(Long id) {
         RoleTutor roleTutor = findById(id);
         roleTutorRepository.delete(roleTutor);
+    }
+    public RoleTutor findById(Long id) {
+        return roleTutorRepository.findById(id).orElseThrow(() -> new RuntimeException("RoleTutor não encontrado"));
+    }
+    public boolean authenticateByEmail(String email) {
+        return roleTutorRepository.existsByEmail(email);
     }
 }
