@@ -27,6 +27,8 @@ public class PetInput {
 
 
     @Nullable
-    private String foto;
+
+    private String fotoPet;
+
 
 }
