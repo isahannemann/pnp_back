@@ -2,15 +2,13 @@ package com.peaktech.pnp.api.controller;
 
 import com.peaktech.pnp.api.service.PetService;
 import com.peaktech.pnp.model.entity.Pet;
+import com.peaktech.pnp.model.input.PetInput;
 import com.peaktech.pnp.model.output.PetOutput;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
