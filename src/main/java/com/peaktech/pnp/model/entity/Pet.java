@@ -1,11 +1,11 @@
 package com.peaktech.pnp.model.entity;
 
 import com.peaktech.pnp.model.defaults.DefaultEntity;
-import com.sun.istack.internal.NotNull;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import jakarta.persistence.*;
 import lombok.*;
 
-import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -21,9 +21,9 @@ import java.util.Date;
 public class Pet extends DefaultEntity implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "id_seq_pet")
-    @SequenceGenerator(sequenceName = "id_seq_pet", allocationSize = 1, name = "id_seq_pet")
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "id_seq_pets")
+    @SequenceGenerator(sequenceName = "id_seq_pets", allocationSize = 1, name = "id_seq_pets")
+    private Long idPet;
 
     @Size(max = 255)
     @NotNull
@@ -38,11 +38,11 @@ public class Pet extends DefaultEntity implements Serializable {
     private String tutor;
 
     @Size(max = 255)
-    @Column(name = "foto")
-    private String foto;
+    @Column(name = "fotoPet")
+    private String fotoPet;
 
     @Transient
-    private String formato_foto;
+    private String formatoFotoPet;
 
     @Size(max = 255)
     @Column(name = "alimentacao", length = 255)
@@ -67,5 +67,9 @@ public class Pet extends DefaultEntity implements Serializable {
     @Size(max = 255)
     @Column(name = "obs", length = 255)
     private String obs;
+
+    @Size(max = 255)
+    @Column(name = "activedPet", length = 255)
+    private String activedPet;
 
 }
