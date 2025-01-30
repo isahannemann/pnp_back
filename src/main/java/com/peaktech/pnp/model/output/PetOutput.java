@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
@@ -14,7 +14,7 @@ import java.util.Date;
 public class PetOutput extends DefaultEntityDTO {
 
     private String name;
-    private Date nascimento;
+    private LocalDate nascimento;
     private String tutor;
     private String banho;
     private String alimentacao;
@@ -22,11 +22,15 @@ public class PetOutput extends DefaultEntityDTO {
     private String vermifugo;
     private String medicamento;
     private String obs;
-    private String foto_base64;
-    private String formato_foto;
+    private String fotoBase64Pet;
+    private String formatoFotoPet;
 
     public PetOutput(Pet pet) {
-        this.setId(pet.getId());
+        if (pet == null) {
+            throw new IllegalArgumentException("O objeto Pet não pode ser nulo.");
+        }
+
+        this.setIdPet(pet.getIdPet());
         this.name = pet.getName();
         this.nascimento = pet.getNascimento();
         this.tutor = pet.getTutor();
@@ -36,13 +40,8 @@ public class PetOutput extends DefaultEntityDTO {
         this.vermifugo = pet.getVermifugo();
         this.medicamento = pet.getMedicamento();
         this.obs = pet.getObs();
-
-
-        if (pet.getFoto() != null) {
-            this.foto_base64 = pet.getFoto();
-            this.formato_foto = pet.getFormato_foto();
-        }
-
-        this.setActived(pet.getActived());
+        this.fotoBase64Pet = pet.getFotoPet() != null ? pet.getFotoPet() : "";
+        this.formatoFotoPet = pet.getFormatoFotoPet() != null ? pet.getFormatoFotoPet() : "";
+        this.setActivedPet(pet.getActivedPet());
     }
 }
