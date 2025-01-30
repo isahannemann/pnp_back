@@ -1,0 +1,9 @@
+﻿PPPPPPPP    NN     NN    PPPPPPPP
+PP     PP   NNN    NN    PP     PP
+PP     PP   NN N   NN    PP     PP
+PPPPPPPP    NN  N  NN    PPPPPPPP
+PP          NN   N NN    PP
+PP          NN    NNN    PP
+PP          NN     NN    PP
+
+Gerenciador de PNP - PEAKTECH - 2025
