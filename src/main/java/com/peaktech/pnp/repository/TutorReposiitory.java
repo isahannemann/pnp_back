@@ -11,17 +11,14 @@ import java.util.Optional;
 @Repository
 public interface TutorRepository extends JpaRepository<Tutor, Long> {
 
+    List<Tutor> findByActivedTutor();
 
-    static List<Tutor> findByActivedTutorTrue();
+    Optional<Tutor> findByIdActivedTutor(Long id);
 
-    Optional<Tutor> findByIdAndActivedTutorTrue(Long id);
+    List<Tutor> findByDeactivatedTutor();
 
-    @Query("select u from Tutor u where u.activedTutor = false")
-    List<Tutor> findAllDesactivedTutor();
+    Optional<Tutor> findByIdDeactivatedTutor(Long id);
 
-    @Query("select u from Tutor u where u.id = :id and u.activedTutor = false")
-    Optional<Tutor> findByIdDesactivedTutor(Long id);
-
-    @Query("SELECT fotoTutor FROM Pet WHERE id = :idTutor")
-    String findByFotoTutor(Long idTutor);
+    @Query("SELECT t.fotoTutor FROM Tutor t WHERE t.id = :idTutor")
+    String findPhotoTutorById(Long idTutor);
 }
