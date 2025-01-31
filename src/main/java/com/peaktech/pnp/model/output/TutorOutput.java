@@ -16,7 +16,7 @@ public class TutorOutput extends DefaultEntityDTO {
     private String name;
     private String email;
     private String password;
-    private Long idRole;
+    private String userNameTutor;
     private String roleTutor;
     private Date birth;
     private String bio;
@@ -28,7 +28,7 @@ public class TutorOutput extends DefaultEntityDTO {
         this.name = tutor.getName();
         this.email = tutor.getEmail();
         this.password = tutor.getPassword();
-        this.idRole = tutor.getRoleTutor().getIdTutor();
+        this.userNameTutor = tutor.getUserNameTutor();
         this.roleTutor = tutor.getRoleTutor().getRoleTutor();
         this.birth = tutor.getBirth();
         this.bio = tutor.getBio();
@@ -38,3 +38,4 @@ public class TutorOutput extends DefaultEntityDTO {
             this.formatoPhotoTutor = tutor.getFormatPhotoTutor();
         }
     }
+}
