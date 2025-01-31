@@ -19,11 +19,11 @@ public class TutorInput {
     private String email;
     private String password;
     private Long role;
-    private Date nascimento;
+    private Date birth;
     private String bio;
 
     @Nullable
-    private String fotoTutor;
+    private String PhotoTutor;
 
 }
 
