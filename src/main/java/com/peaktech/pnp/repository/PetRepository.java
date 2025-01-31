@@ -24,5 +24,5 @@ public interface PetRepository extends JpaRepository<Pet , Long> {
     Optional<Pet> findByIdDesactivedPet(Long id);
 
     @Query("SELECT fotoPet FROM Pet WHERE id = :idPet")
-    String findByFotoPet(Long idPet);
+    String findByPhotoPet(Long idPet);
 }
