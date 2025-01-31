@@ -14,34 +14,33 @@ import java.time.LocalDate;
 public class PetOutput extends DefaultEntityDTO {
 
     private String name;
-    private LocalDate nascimento;
+    private LocalDate birth;
     private String tutor;
-    private String banho;
-    private String alimentacao;
-    private String vacina;
-    private String vermifugo;
-    private String medicamento;
-    private String obs;
-    private String fotoBase64Pet;
-    private String formatoFotoPet;
+    private String bath;
+    private String feed;
+    private String vaccinate;
+    private String deworm;
+    private String medicine;
+    private String observation;
+    private String PhotoBase64Pet;
+    private String formatPhotoPet;
 
     public PetOutput(Pet pet) {
         if (pet == null) {
             throw new IllegalArgumentException("O objeto Pet não pode ser nulo.");
         }
-
         this.setIdPet(pet.getIdPet());
         this.name = pet.getName();
-        this.nascimento = pet.getNascimento();
+        this.birth = pet.getBirth();
         this.tutor = pet.getTutor();
-        this.banho = pet.getBanho();
-        this.alimentacao = pet.getAlimentacao();
-        this.vacina = pet.getVacina();
-        this.vermifugo = pet.getVermifugo();
-        this.medicamento = pet.getMedicamento();
-        this.obs = pet.getObs();
-        this.fotoBase64Pet = pet.getFotoPet() != null ? pet.getFotoPet() : "";
-        this.formatoFotoPet = pet.getFormatoFotoPet() != null ? pet.getFormatoFotoPet() : "";
+        this.bath = pet.getBath();
+        this.feed = pet.getFeed();
+        this.vaccinate = pet.getVaccinate();
+        this.deworm = pet.getDeworm();
+        this.medicine = pet.getMedicine();
+        this.observation = pet.getObservation();
+        this.PhotoBase64Pet = pet.getPhotoPet() != null ? pet.getPhotoPet() : "";
+        this.formatPhotoPet = pet.getFormatPhotoPet() != null ? pet.getFormatPhotoPet() : "";
         this.setActivedPet(pet.getActivedPet());
     }
 }

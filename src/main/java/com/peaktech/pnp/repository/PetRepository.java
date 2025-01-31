@@ -12,17 +12,20 @@ import java.util.Optional;
 @Repository
 public interface PetRepository extends JpaRepository<Pet , Long> {
 
+    Optional<Pet> findByIdAndActivedPet(Long id);
 
-    static List<Pet> findByActivedPetTrue();
+    @Query("SELECT u FROM Pet u WHERE u.activedPet = false")
+    List<Pet> findAllPetDeactivate();
 
-    Optional<Pet> findByIdAndActivedPetTrue(Long id);
-
-    @Query("select u from Pet u where u.activedPet = false")
-    List<Pet> findAllPetDesactived();
-
-    @Query("select u from Pet u where u.id = :id and u.activedPet = false")
-    Optional<Pet> findByIdDesactivedPet(Long id);
+    @Query("SELECT u FROM Pet u WHERE u.id = :id AND u.activedPet = false")
+    Optional<Pet> findByIdDeactivatePet(Long id);
 
     @Query("SELECT fotoPet FROM Pet WHERE id = :idPet")
     String findByPhotoPet(Long idPet);
+
+    @Query("SELECT p FROM Pet p WHERE p.tutorUsername = :tutorUsername AND p.activedPet = true")
+    List<Pet> findByTutorUsernameAndActivedPet(@Param("tutorUsername") String tutorUsername);
+
+    @Query("SELECT p FROM Pet p WHERE p.usernamePet = :usernamePet AND p.activedPet = true")
+    Optional<Pet> findByUsernamePetAndActivedPet(@Param("usernamePet") String usernamePet);
 }

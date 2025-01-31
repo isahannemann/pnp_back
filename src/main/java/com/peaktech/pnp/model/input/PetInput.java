@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.springframework.lang.Nullable;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
@@ -17,7 +17,10 @@ public class PetInput {
 
     private Long id;
     private String name;
-    private Date birth;
+    private LocalDate birth;
+    private String petUsername;
+    private String name;
+    private LocalDate birth;
     private String tutor;
     private String bath;
     private String feed;

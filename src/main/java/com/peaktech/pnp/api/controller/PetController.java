@@ -1,12 +1,17 @@
+package com.peaktech.pnp.api.controller;
+
 import com.peaktech.pnp.api.service.PetService;
 import com.peaktech.pnp.model.entity.Pet;
-import com.peaktech.pnp.model.input.PetInput;
 import com.peaktech.pnp.model.output.PetOutput;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.ErrorResponse;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,36 +20,38 @@ import java.util.stream.Collectors;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/pet")
+
 public class PetController {
 
+    @Autowired
     private final PetService petService;
 
-    // Lista todos os pets
     @GetMapping
     public ResponseEntity<List<PetOutput>> listAll() {
-        List<Pet> pets = petService.listAll();
-        List<PetOutput> responseDTOS = pets.stream()
+        List<Pet> users = petService.listAll();
+        List<PetOutput> responseDTOS = users.stream()
                 .map(PetOutput::new)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(responseDTOS);
     }
 
     // Cadastro de pet
-    @PostMapping("/pet")
+    @PostMapping
     public ResponseEntity<?> savePet(@Valid @RequestBody PetInput petInput) {
-        if (petService.findById(petInput.getId()).isPresent()) {
-            return ResponseEntity.badRequest().body(new ErrorResponse("Pet já cadastrado"));
+        if (petService.findByName(petInput.getName()).isPresent()) {
+            return ResponseEntity.badRequest().body("Pet com esse nome já cadastrado");
         } else {
             Pet createdPet = petService.save(petInput);
             PetOutput petOutput = new PetOutput(createdPet);
+
             return ResponseEntity.ok(petOutput);
         }
     }
 
-    // Desativar pet por ID
-    @PutMapping("/deactivate/{id}")
-    public ResponseEntity<?> deactivatePet(@PathVariable Long id) {
-        Optional<Pet> petOptional = petService.findById(id);
+    // Desativar pet por nome de usuário
+    @PutMapping("/deactivate/{name}")
+    public ResponseEntity<?> deactivatePet(@PathVariable String name) {
+        Optional<Pet> petOptional = petService.findByName(name);
         if (petOptional.isPresent()) {
             Pet pet = petOptional.get();
             pet.setActive(false); // Define o pet como inativo
@@ -55,10 +62,10 @@ public class PetController {
         }
     }
 
-    // Atualizar pet por ID
-    @PutMapping("/update/{id}")
-    public ResponseEntity<?> updatePet(@PathVariable Long id, @Valid @RequestBody PetInput petInput) {
-        Optional<Pet> petOptional = petService.findById(id);
+    // Atualizar pet por nome de usuário
+    @PutMapping("/update/{name}")
+    public ResponseEntity<?> updatePet(@PathVariable String name, @Valid @RequestBody PetInput petInput) {
+        Optional<Pet> petOptional = petService.findByName(name);
         if (petOptional.isPresent()) {
             Pet pet = petOptional.get();
             // Atualiza os dados do pet com as informações do PetInput
@@ -73,10 +80,10 @@ public class PetController {
         }
     }
 
-    // Exibir perfil do pet (aqui você pode adicionar lógica para retornar detalhes do pet)
-    @GetMapping("/myprofile/{id}")
-    public ResponseEntity<?> myProfile(@PathVariable Long id) {
-        Optional<Pet> petOptional = petService.findById(id);
+    // Exibir perfil do pet pelo nome de usuário
+    @GetMapping("/myprofile/{name}")
+    public ResponseEntity<?> myProfile(@PathVariable String name) {
+        Optional<Pet> petOptional = petService.findByName(name);
         if (petOptional.isPresent()) {
             return ResponseEntity.ok(new PetOutput(petOptional.get()));
         } else {
@@ -84,10 +91,10 @@ public class PetController {
         }
     }
 
-    // Editar perfil do pet (aqui você pode adicionar lógica para editar o perfil)
-    @PutMapping("/editprofile/{id}")
-    public ResponseEntity<?> editProfile(@PathVariable Long id, @Valid @RequestBody PetInput petInput) {
-        Optional<Pet> petOptional = petService.findById(id);
+    // Editar perfil do pet pelo nome de usuário
+    @PutMapping("/editprofile/{name}")
+    public ResponseEntity<?> editProfile(@PathVariable String name, @Valid @RequestBody PetInput petInput) {
+        Optional<Pet> petOptional = petService.findByName(name);
         if (petOptional.isPresent()) {
             Pet pet = petOptional.get();
             // Atualiza os dados do pet com as informações do PetInput
@@ -102,3 +109,5 @@ public class PetController {
         }
     }
 }
+
+
