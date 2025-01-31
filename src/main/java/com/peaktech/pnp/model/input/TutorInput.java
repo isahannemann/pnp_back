@@ -21,9 +21,10 @@ public class TutorInput {
     private Long role;
     private Date birth;
     private String bio;
+    private String userNameTutor;
 
     @Nullable
-    private String PhotoTutor;
+    private String photoTutor;
 
 }
 

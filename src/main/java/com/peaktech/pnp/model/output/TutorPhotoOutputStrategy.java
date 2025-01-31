@@ -1,6 +1,6 @@
 ﻿package com.peaktech.pnp.model.output;
 
-import com.peaktech.pnp.model.output.PhotoOutput;
+import com.peaktech.pnp.model.output.photo.PhotoOutput;
 import org.springframework.stereotype.Service;
 
 @Service
