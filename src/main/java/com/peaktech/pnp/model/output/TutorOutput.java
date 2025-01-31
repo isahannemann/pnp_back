@@ -18,10 +18,10 @@ public class TutorOutput extends DefaultEntityDTO {
     private String password;
     private Long idRole;
     private String roleTutor;
-    private Date nascimento;
+    private Date birth;
     private String bio;
-    private String foto_base64_tutor;
-    private String formato_foto_tutor;
+    private String fotoBase64Tutor;
+    private String formatoPhotoTutor;
 
     public TutorOutput(Tutor tutor) {
         this.setIdTutor(tutor.getIdTutor());
@@ -30,13 +30,11 @@ public class TutorOutput extends DefaultEntityDTO {
         this.password = tutor.getPassword();
         this.idRole = tutor.getRoleTutor().getIdTutor();
         this.roleTutor = tutor.getRoleTutor().getRoleTutor();
-        this.nascimento = tutor.getNascimento();
+        this.birth = tutor.getBirth();
         this.bio = tutor.getBio();
 
         if (tutor.getFoto() != null) {
-            this.foto_base64_tutor = tutor.getFotoTutor();
-            this.formato_foto_tutor = tutor.getFormatoFotoTutor();
+            this.fotoBase64Tutor = tutor.getPhotoTutor();
+            this.formatoPhotoTutor = tutor.getFormatPhotoTutor();
         }
-
-        this.setActivedTutor(pet.getActived());
     }
