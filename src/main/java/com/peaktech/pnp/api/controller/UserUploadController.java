@@ -1,8 +1,8 @@
 ﻿package com.peaktech.pnp.api.controller;
 
-import com.peaktech.pnp.api.service.UserUploadService;
+import com.peaktech.pnp.api.service.upload.UserUploadService;
 import com.peaktech.pnp.model.input.FileUploadInput;
-import com.peaktech.pnp.model.output.PhotoOutput;
+import com.peaktech.pnp.model.output.photo.PhotoOutput;
 import com.peaktech.pnp.enums.UserType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
