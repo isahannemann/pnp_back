@@ -29,6 +29,8 @@ public class TutorService {
     private RoleTutorService roleTutorService;
 
     @PostConstruct
+
+
     private String encryptPassword(TutorInput tutorInput, Tutor tutor) {
         if (tutorInput.getPassword() != null && !tutorInput.getPassword().isEmpty() && !tutorInput.getPassword().equals(tutor.getPassword())) {
             return passwordEncoder.encode(tutorInput.getPassword());
@@ -36,8 +38,8 @@ public class TutorService {
         return tutor.getPassword();
     }
 
-    public Tutor deactivateById(Long id) {
-        Tutor tutor = findById(id);
+    public Tutor deactivateByUsername(String tutorUsername) {
+        Tutor tutor = findByUsername(tutorUsername);
         tutor.setActived(false);
         return tutorRepository.save(tutor);
     }
@@ -46,43 +48,43 @@ public class TutorService {
         return tutorRepository.findAllUserDesactived();
     }
 
-    public Tutor findByIdDesactived(Long id) {
-        return tutorRepository.findByIdDesactived(id).orElseThrow(() -> new RuntimeException("Tutor não encontrado"));
+    public Tutor findByUsernameDesactived(String tutorUsername) {
+        return tutorRepository.findByUsernameDesactived(tutorUsername).orElseThrow(() -> new RuntimeException("Tutor não encontrado"));
     }
 
     public Optional<Tutor> findByEmail(String email) {
         return tutorRepository.findByExistEmail(email);
     }
 
-    public Tutor activedById(Long id) {
-        Tutor tutor = findByIdDesactived(id);
+    public Tutor activateByUsername(String tutorUsername) {
+        Tutor tutor = findByUsernameDesactived(tutorUsername);
         tutor.setActived(true);
         return tutorRepository.save(tutor);
     }
 
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Tutor tutor = tutorRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado"));
+    public UserDetails loadUserByUsername(String tutorUsername) throws UsernameNotFoundException {
+        Tutor tutor = tutorRepository.findByUsername(tutorUsername).orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado"));
         if (!tutor.getActived()) {
             throw new UsernameNotFoundException("Usuário não encontrado");
         }
         RoleTutor role = roleTutorService.findById(tutor.getRoleTutor().getId());
         return User.builder()
-                .username(tutor.getEmail())
+                .username(tutor.getUsername())
                 .password(tutor.getPassword())
                 .roles(role.getRoleTutor())
                 .build();
     }
 
     public Tutor authenticate(Tutor tutor) {
-        UserDetails tutorDetails = loadUserByUsername(tutor.getEmail());
+        UserDetails tutorDetails = loadUserByUsername(tutor.getUsername());
         if (passwordEncoder.matches(tutor.getPassword(), tutorDetails.getPassword())) {
-            return findByEmail(tutor.getEmail()).get();
+            return findByUsername(tutor.getUsername());
         }
         throw new InvalidPasswordException();
     }
 
-    public boolean activedAccountTutor(String email) {
-        Tutor tutor = tutorRepository.findByExistEmail(email).orElseThrow(() -> new RuntimeException("Tutor não encontrado"));
+    public boolean activateAccountTutor(String tutorUsername) {
+        Tutor tutor = tutorRepository.findByUsername(tutorUsername).orElseThrow(() -> new RuntimeException("Tutor não encontrado"));
         if (tutor.getActived()) {
             return false;
         }
@@ -100,11 +102,11 @@ public class TutorService {
         return tutorRepository.findByExistEmail(email);
     }
 
-    public void delete(Long id) {
-        tutorRepository.deleteById(id);
+    public void delete(String tutorUsername) {
+        tutorRepository.deleteByUsername(tutorUsername);
     }
 
-    private Tutor findById(Long id) {
-        return tutorRepository.findById(id).orElseThrow(() -> new RuntimeException("Tutor não encontrado"));
+    public Tutor findByUsername(String tutorUsername) {
+        return tutorRepository.findByUsername(tutorUsername).orElseThrow(() -> new RuntimeException("Tutor não encontrado"));
     }
 }
