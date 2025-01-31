@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.springframework.lang.Nullable;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
@@ -15,9 +15,20 @@ import java.util.Date;
 
 public class PetInput {
 
+<<<<<<< Updated upstream
     private Long id;
     private String name;
     private Date birth;
+=======
+<<<<<<< Updated upstream
+    private String name;
+    private Date nascimento;
+=======
+    private String petUsername;
+    private String name;
+    private LocalDate birth;
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
     private String tutor;
     private String bath;
     private String feed;
