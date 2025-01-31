@@ -1,5 +1,6 @@
 ﻿package com.peaktech.pnp.api.service;
 
+import com.peaktech.pnp.api.service.upload.UploadService;
 import com.peaktech.pnp.api.service.upload.UploadStrategy;
 import com.peaktech.pnp.model.entity.Pet;
 import com.peaktech.pnp.model.input.FileUploadInput;
@@ -30,14 +31,14 @@ public class PetService {
     }
 
     public List<Pet> listAll() {
-        List<Pet> pets = PetRepository.findByActivedPetTrue();
+        List<Pet> pets = petRepository.findByActivedPet();
 
         for (Pet pet : pets) {
             if (pet.getPhotoPet() != null) {
                 try {
-                    PhotoOutput PetPhotoOutputStrategy = uploadStrategy.getFile(pet.getPhotoPet());
-                    pet.setPhotoPet(PetPhotoOutputStrategy.getBase64());
-                    pet.setFormatPhotoPet(PetPhotoOutputStrategy.getFormat());
+                    PhotoOutput petPhotoOutputStrategy = uploadStrategy.getFile(pet.getPhotoPet());
+                    pet.setPhotoPet(petPhotoOutputStrategy.getBase64());
+                    pet.setFormatPhotoPet(petPhotoOutputStrategy.getFormat());
                 } catch (Exception e) {
                     System.err.println("Erro ao carregar a foto para o pet " + pet.getName() + ": " + e.getMessage());
                     pet.setPhotoPet(null);
@@ -57,13 +58,23 @@ public class PetService {
                 PhotoOutput PhotoPetOutput = uploadStrategy.getFile(pet.getPhotoPet());
                 pet.setPhotoPet(PhotoPetOutput.getBase64());
                 pet.setFormatPhotoPet(PhotoPetOutput.getFormat());
+
+    public Optional<Pet> findByUsernamePet(String usernamePet) {
+        Pet pet = petRepository.findByUsernamePetAndActivedPet(usernamePet)
+                .orElseThrow(() -> new RuntimeException("Pet não encontrado"));
+
+        if (pet.getPhotoPet() != null) {
+            try {
+                PhotoOutput photoPetOutput = uploadStrategy.getFile(pet.getPhotoPet());
+                pet.setPhotoPet(photoPetOutput.getBase64());
+                pet.setFormatPhotoPet(photoPetOutput.getFormat());
             } catch (Exception e) {
                 System.err.println("Erro ao carregar a foto para o pet " + pet.getName() + ": " + e.getMessage());
                 pet.setPhotoPet(null);
                 pet.setFormatPhotoPet(null);
             }
         }
-        return petRepository.findById(id);
+        return pet;
     }
 
     public Pet updateByIdPet(Long id, PetInput userInput) {
@@ -82,6 +93,43 @@ public class PetService {
         pet.setObservation(userInput.getObservation());
         pet.setPhotoPet(uniqueFileName);
 
+        return Optional.of(pet);
+    }
+
+    public List<Pet> findByTutor(String tutorUsername) {
+        List<Pet> pets = petRepository.findByTutorUsernameAndActivedPet(tutorUsername);
+
+        for (Pet pet : pets) {
+            if (pet.getPhotoPet() != null) {
+                try {
+                    PhotoOutput petPhotoOutputStrategy = uploadStrategy.getFile(pet.getPhotoPet());
+                    pet.setPhotoPet(petPhotoOutputStrategy.getBase64());
+                    pet.setFormatPhotoPet(petPhotoOutputStrategy.getFormat());
+                } catch (Exception e) {
+                    System.err.println("Erro ao carregar a foto para o pet " + pet.getName() + ": " + e.getMessage());
+                    pet.setPhotoPet(null);
+                    pet.setFormatPhotoPet(null);
+                }
+            }
+        }
+        return pets;
+    }
+
+    public Pet updateByUsernamePet(String usernamePet, PetInput petInput) {
+        Pet pet = findByUsernamePet(usernamePet).orElseThrow(() -> new RuntimeException("Pet não encontrado"));
+        String uniqueFileName = savePetProfilePhoto(petInput, pet.getUsernamePet());
+
+        pet.setName(petInput.getName());
+        pet.setBirth(petInput.getBirth());
+        pet.setTutor(petInput.getTutor());
+        pet.setBath(petInput.getBath());
+        pet.setFeed(petInput.getFeed());
+        pet.setVaccinate(petInput.getVaccine());
+        pet.setDeworm(petInput.getDeworm());
+        pet.setMedicine(petInput.getMedicine());
+        pet.setObservation(petInput.getObservation());
+        pet.setPhotoPet(uniqueFileName);
+
         return petRepository.save(pet);
     }
 
@@ -90,15 +138,44 @@ public class PetService {
             try {
                 String namePhoto = petRepository.findByPhotoPet(idPet);
 
-                if (namePhoto != null) {
-                    uploadStrategy.deleteFile(namePhoto);
+            if (nomeFoto != null) {
+                uploadService.deleteFile(nomeFoto, caminhoFotos);
+
+                private String savePetProfilePhoto (PetInput petInput, String petUsername){
+                    if (petInput.getPhotoPet() != null) {
+                        try {
+                            String namePhoto = petRepository.findByPhotoPet(petUsername);
+
+
+                            if (namePhoto != null) {
+                                uploadStrategy.deleteFile(namePhoto);
+                            }
+
+                            return uploadStrategy.saveFile(new FileUploadInput(petInput.getPhotoPet(), "foto"));
+                        } catch (Exception e) {
+                            System.err.println("Erro ao salvar foto do pet: " + e.getMessage());
+                        }
+                    }
+                    return null;
                 }
 
-                return uploadStrategy.saveFile(new FileUploadInput(petInput.getPhotoPet(), "foto"));
-            } catch (Exception e) {
-                System.err.println("Erro ao salvar foto do pet: " + e.getMessage());
+                public Pet save (PetInput petInput){
+                    Pet pet = new Pet();
+                    pet.setUsernamePet(petInput.getPetUsername());
+                    pet.setName(petInput.getName());
+                    pet.setBirth(petInput.getBirth());
+                    pet.setTutor(petInput.getTutor());
+                    pet.setBath(petInput.getBath());
+                    pet.setFeed(petInput.getFeed());
+                    pet.setVaccinate(petInput.getVaccine());
+                    pet.setDeworm(petInput.getDeworm());
+                    pet.setMedicine(petInput.getMedicine());
+                    pet.setObservation(petInput.getObservation());
+
+                    // Verifica se há foto e faz o upload, se necessário
+                    String uniqueFileName = savePetProfilePhoto(petInput, pet.getUsernamePet());
+                    pet.setPhotoPet(uniqueFileName);
+
+                    return petRepository.save(pet);
+                }
             }
-        }
-        return null;
-    }
-}
