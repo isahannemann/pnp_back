@@ -1,113 +1,104 @@
 ﻿package com.peaktech.pnp.api.service;
 
-import com.peaktech.pnp.core.utils.Utils;
+import com.peaktech.pnp.api.service.upload.UploadStrategy;
 import com.peaktech.pnp.model.entity.Pet;
 import com.peaktech.pnp.model.input.FileUploadInput;
 import com.peaktech.pnp.model.input.PetInput;
+import com.peaktech.pnp.model.output.photo.PhotoOutput;
 import com.peaktech.pnp.repository.PetRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class PetService {
 
-    @Autowired
     private final PetRepository petRepository;
-    @Autowired
-    private final Utils utils;
-    @Autowired
-    private final PetUploadService uploadService;
+    private final UploadStrategy uploadStrategy;
 
-    @Value("${filediretorio}")
-    private String filedir;
-    private String caminhoFotosPet;
+    @Value("${pet.directory}")
+    private String pathPhotosPet;
 
     @PostConstruct
     public void init() {
-        filedir = filedir.replaceAll("\"", "").replaceAll(";", "");
-        caminhoFotosPet = filedir + "fotos/";
-        System.out.println("Caminho das fotos do pet inicializado: " + caminhoFotosPet);
+        System.out.println("Caminho das fotos do pet inicializado: " + pathPhotosPet);
     }
 
     public List<Pet> listAll() {
-        List<Pet> pets = petRepository.findByActivedPetTrue();
+        List<Pet> pets = PetRepository.findByActivedPetTrue();
 
         for (Pet pet : pets) {
-            if (pet.getFotoPet() != null) {
-                String fullPath = caminhoFotosPet + pet.getFotoPet();
-                System.out.println("Caminho da foto do pet " + pet.getName() + ": " + fullPath);
-
+            if (pet.getPhotoPet() != null) {
                 try {
-                    FotoPetOutput fotoPetOutput = uploadService.buscarArquivoBase64ComFormato(pet.getFotoPet(), caminhoFotosPet);
-                    pet.setFotoPet(fotoPetOutput.getFotoBase64Pet());
-                    pet.setFormatoFotoPet(fotoPetOutput.getFormatoFotoPet());
+                    PhotoOutput PetPhotoOutputStrategy = uploadStrategy.getFile(pet.getPhotoPet());
+                    pet.setPhotoPet(PetPhotoOutputStrategy.getBase64());
+                    pet.setFormatPhotoPet(PetPhotoOutputStrategy.getFormat());
                 } catch (Exception e) {
                     System.err.println("Erro ao carregar a foto para o pet " + pet.getName() + ": " + e.getMessage());
-                    pet.setFotoPet(null);
-                    pet.setFormatoFotoPet(null);
+                    pet.setPhotoPet(null);
+                    pet.setFormatPhotoPet(null);
                 }
-            } else {
-                System.out.println("Pet " + pet.getName() + " não possui foto.");
             }
         }
         return pets;
     }
 
-    public Pet findById(Long id) {
+    public Optional<Pet> findById(Long id) {
         Pet pet = petRepository.findByIdAndActivedPetTrue(id)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+                .orElseThrow(() -> new RuntimeException("Pet não encontrado"));
 
-        if (pet.getFotoPet() != null) {
+        if (pet.getPhotoPet() != null) {
             try {
-                FotoPetOutput fotoPetOutput = uploadService.buscarArquivoBase64ComFormato(pet.getFotoPet(), caminhoFotosPet);
-                pet.setFotoPet(fotoPetOutput.getFotoBase64Pet());
-                pet.setFormatoFotoPet(fotoPetOutput.getFormatoFotoPet());
+                PhotoOutput PhotoPetOutput = uploadStrategy.getFile(pet.getPhotoPet());
+                pet.setPhotoPet(PhotoPetOutput.getBase64());
+                pet.setFormatPhotoPet(PhotoPetOutput.getFormat());
             } catch (Exception e) {
                 System.err.println("Erro ao carregar a foto para o pet " + pet.getName() + ": " + e.getMessage());
-                pet.setFotoPet(null);
-                pet.setFormatoFotoPet(null);
+                pet.setPhotoPet(null);
+                pet.setFormatPhotoPet(null);
             }
         }
-        return pet;
+        return petRepository.findById(id);
     }
 
     public Pet updateByIdPet(Long id, PetInput userInput) {
         Pet pet = findById(id);
-        String uniqueFileName = salvarFotoPerfilPet(userInput, pet.getIdPet(), "");
+        String uniqueFileName = savePetProfilePhoto(userInput, pet.getIdPet());
 
         pet.setName(userInput.getName());
-        pet.setNascimento(userInput.getNascimento());
+        pet.setBirth(userInput.getBirth());
         pet.setTutor(userInput.getTutor());
-        pet.setBanho(userInput.getBanho());
-        pet.setAlimentacao(userInput.getAlimentacao());
-        pet.setVacina(userInput.getVacina());
-        pet.setVermifugo(userInput.getVermifugo());
-        pet.setMedicamento(userInput.getMedicamento());
-        pet.setObs(userInput.getObs());
-        pet.setFotoPet(uniqueFileName);
+        pet.setBath(userInput.getBath());
+        pet.setFeed(userInput.getFeed());
+        pet.setVaccinate(userInput.getVaccine());
+        pet.setDeworm(userInput.getDeworm());
+        pet.setDeworm(userInput.getDeworm());
+        pet.setMedicine(userInput.getMedicine());
+        pet.setObservation(userInput.getObservation());
+        pet.setPhotoPet(uniqueFileName);
 
         return petRepository.save(pet);
     }
 
-    private String salvarFotoPerfilPet(PetInput petInput, Long idPet, String uniqueFileNamePet) {
-        if (petInput.getFotoPet() != null && utils.isBase64(petInput.getFotoPet())) {
-            String nomeFoto = petRepository.findByFotoPet(idPet);
+    private String savePetProfilePhoto(PetInput petInput, Long idPet) {
+        if (petInput.getPhotoPet() != null) {
+            try {
+                String namePhoto = petRepository.findByPhotoPet(idPet);
 
-            if (nomeFoto != null) {
-                uploadService.deleteFile(nomeFoto, caminhoFotosPet);
+                if (namePhoto != null) {
+                    uploadStrategy.deleteFile(namePhoto);
+                }
+
+                return uploadStrategy.saveFile(new FileUploadInput(petInput.getPhotoPet(), "foto"));
+            } catch (Exception e) {
+                System.err.println("Erro ao salvar foto do pet: " + e.getMessage());
             }
-
-            FileUploadInput fileUploadInput = new FileUploadInput();
-            fileUploadInput.setPdfBase64(petInput.getFotoPet());
-            fileUploadInput.setFileName("foto");
-            uniqueFileNamePet = uploadService.saveBase64(fileUploadInput, caminhoFotosPet);
         }
-        return uniqueFileNamePet;
+        return null;
     }
 }
