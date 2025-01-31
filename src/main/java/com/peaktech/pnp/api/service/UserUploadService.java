@@ -1,7 +1,7 @@
 ﻿package com.peaktech.pnp.api.service;
 
 import com.peaktech.pnp.model.input.FileUploadInput;
-import com.peaktech.pnp.model.output.PhotoOutput;
+import com.peaktech.pnp.model.output.photo.PhotoOutput;
 import org.hibernate.usertype.UserType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
