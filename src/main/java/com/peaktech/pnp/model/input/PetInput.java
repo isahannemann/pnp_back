@@ -15,20 +15,12 @@ import java.time.LocalDate;
 
 public class PetInput {
 
-<<<<<<< Updated upstream
     private Long id;
     private String name;
-    private Date birth;
-=======
-<<<<<<< Updated upstream
-    private String name;
-    private Date nascimento;
-=======
+    private LocalDate birth;
     private String petUsername;
     private String name;
     private LocalDate birth;
->>>>>>> Stashed changes
->>>>>>> Stashed changes
     private String tutor;
     private String bath;
     private String feed;
