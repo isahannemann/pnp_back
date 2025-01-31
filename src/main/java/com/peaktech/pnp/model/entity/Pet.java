@@ -30,43 +30,43 @@ public class Pet extends DefaultEntity implements Serializable {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "nascimento")
-    private Date nascimento;
+    @Column(name = "birth")
+    private Date birth;
 
     @Size(max = 255)
     @Column(name = "tutor")
     private String tutor;
 
     @Size(max = 255)
-    @Column(name = "fotoPet")
-    private String fotoPet;
+    @Column(name = "photoPet")
+    private String photoPet;
 
     @Transient
-    private String formatoFotoPet;
+    private String formatPhotoPet;
 
     @Size(max = 255)
-    @Column(name = "alimentacao", length = 255)
-    private String alimentacao;
+    @Column(name = "feed", length = 255)
+    private String feed;
 
     @Size(max = 255)
-    @Column(name = "banho", length = 255)
-    private String banho;
+    @Column(name = "bath", length = 255)
+    private String bath;
 
     @Size(max = 255)
-    @Column(name = "vacina", length = 255)
-    private String vacina;
+    @Column(name = "vaccinate", length = 255)
+    private String vaccinate;
 
     @Size(max = 255)
-    @Column(name = "vermifugo", length = 255)
-    private String vermifugo;
+    @Column(name = "deworm", length = 255)
+    private String deworm;
 
     @Size(max = 255)
-    @Column(name = "medicamento", length = 255)
-    private String medicamento;
+    @Column(name = "medicine", length = 255)
+    private String medicine;
 
     @Size(max = 255)
-    @Column(name = "obs", length = 255)
-    private String obs;
+    @Column(name = "observation", length = 255)
+    private String observation;
 
     @Size(max = 255)
     @Column(name = "activedPet", length = 255)

@@ -15,20 +15,18 @@ import java.util.Date;
 
 public class PetInput {
 
+    private Long id;
     private String name;
-    private Date nascimento;
+    private Date birth;
     private String tutor;
-    private String banho;
-    private String alimentacao;
-    private String vacina;
-    private String vermifugo;
-    private String medicamento;
-    private String obs;
-
+    private String bath;
+    private String feed;
+    private String vaccine;
+    private String deworm;
+    private String medicine;
+    private String observation;
 
     @Nullable
-
-    private String fotoPet;
-
+    private String PhotoPet;
 
 }
